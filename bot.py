@@ -364,36 +364,11 @@ class BlumTod:
             claim_url = "https://game-domain.blum.codes/api/v2/game/claim"
             dogs_url = 'https://game-domain.blum.codes/api/v2/game/eligibility/dogs_drop'
 
-            try:
-                random_uuid = str(uuid.uuid4())
-                point = random.randint(self.cfg.low, self.cfg.high)
-                data = await get_payload(gameId=random_uuid, points=point)
-
-                if "payload" in data:
-                    self.log(f"{green}Games available right now!")
-                    game = True
-
-                else:
-                    self.log(f"{red}Failed start games - {e}")
-                    self.log(f"{red}Install node.js!")
-                    game = False
-            except Exception as e:
-                self.log(f"{red}Failed start games - {e}")
-                self.log(f"{red}Install node.js!")
-                game = False
-
-
-            #проверяем - доступен ли сервер декодирования
+            game = True
             # try:
-            #
-            #     PAYLOAD_SERVER_URL = "https://server2.ggtog.live/api/game"
             #     random_uuid = str(uuid.uuid4())
-            #     points = random.randint(self.cfg.low, self.cfg.high)
-            #     payload_data = {'gameId': random_uuid,
-            #                     'points': str(points),
-            #                     "dogs": 0}
-            #     resp = requests.post(PAYLOAD_SERVER_URL, json=payload_data)
-            #     data = resp.json()
+            #     point = random.randint(self.cfg.low, self.cfg.high)
+            #     data = await get_payload(gameId=random_uuid, points=point, freeze=None)
             #
             #     if "payload" in data:
             #         self.log(f"{green}Games available right now!")
@@ -401,13 +376,13 @@ class BlumTod:
             #
             #     else:
             #         self.log(f"{red}Failed start games - {e}")
-            #         self.log(f"{red}Games are not available right now!")
+            #         self.log(f"{red}Install node.js!")
             #         game = False
-            #
             # except Exception as e:
             #     self.log(f"{red}Failed start games - {e}")
-            #     self.log(f"{red}Games are not available right now!")
+            #     self.log(f"{red}Install node.js!")
             #     game = False
+
 
 
             while game:
@@ -459,21 +434,21 @@ class BlumTod:
                             self.error(f"Failed elif dogs, error: {e}")
                             eligible = None
 
+                        freeze_count = random.randint(*[4, 8])
                         #создаем payload
                         if eligible:
                             dogs = random.randint(25, 30) * 5
                             self.log(f'dogs = {dogs}')
                             # payload = await self.create_payload(game_id=game_id, points=point,dogs=dogs)
-                            payload = await get_payload(gameId=game_id, points=point)
+                            payload = await get_payload(gameId=game_id, points=point, freeze=freeze_count)
                         else:
                             # payload = await self.create_payload(game_id=game_id, points=point,dogs=0)
-                            payload = await get_payload(gameId=game_id, points=point)
+                            payload = await get_payload(gameId=game_id, points=point,freeze=freeze_count)
 
-                        await countdown(random.randint(31, 40))
+                        await countdown(30 + freeze_count * 5)
 
                         res = await self.http(claim_url, self.headers, payload)
-
-                        if "OK" in res.text:
+                        if res and "OK" in res.text:
                             self.log(
                                 f"{green}success earn {white}{point}{green} from game !"
                             )
