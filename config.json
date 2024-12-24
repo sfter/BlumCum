@@ -3,7 +3,7 @@
     "auto_task": true,
     "auto_game": true,
     "low": 220,
-    "high": 250,
+    "high": 450,
     "clow": "5",
     "chigh": "10"
 }
