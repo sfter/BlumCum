@@ -7,3 +7,6 @@ aiofiles
 aiosqlite
 anyio
 fake-useragent
+cfcrawler @ git+https://github.com/akasakaid/cfcrawler@d53b220ef451283064e94491fb3fc72a81dd25ee
+ua-generator==1.0.6
+async-tinydb==1.7.3
