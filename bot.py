@@ -109,16 +109,22 @@ class BlumTod:
             ip = res.json().get("ip")
             country = res.json().get("country")
             if not ip:
-                res = await self.http(ipinfo2_url, headers)
-                ip = res.json().get("ip")
-                country = res.json().get("country_code")
-                if not ip:
-                    res = await self.http(ipinfo3_url, headers)
-                    ip = res.json().get("ipAddress")
-                    country = res.json().get("countryCode")
+                try:
+                    res = await self.http(ipinfo2_url, headers)
+                    ip = res.json().get("ip")
+                    country = res.json().get("country_code")
+                    if not ip:
+                        try:
+                            res = await self.http(ipinfo3_url, headers)
+                            ip = res.json().get("ipAddress")
+                            country = res.json().get("countryCode")
+                        except Exception as e:
+                            self.log(e)
+                except Exception as e:
+                    self.log(e)
             self.log(f"{green}ip : {white}{ip} {green}country : {white}{country}")
-        except json.decoder.JSONDecodeError:
-            self.log(f"{green}ip : {white}None {green}country : {white}None")
+        except Exception as e:
+            self.log(e)
 
     def get_random_proxy(self, isself, israndom=False):
         if israndom:
@@ -256,7 +262,7 @@ class BlumTod:
         farming_claim_url = "https://game-domain.blum.codes/api/v1/farming/claim"
         farming_start_url = "https://game-domain.blum.codes/api/v1/farming/start"
         if len(self.proxies) > 0:
-            await self.ipinfo()
+             await self.ipinfo()
         uid = self.user.get("id")
         first_name = self.user.get("first_name")
         self.log(f"{green}login as {white}{first_name}")
